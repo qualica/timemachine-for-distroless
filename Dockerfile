@@ -31,12 +31,13 @@ COPY		./config /
 ADD		https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 ADD		https://bootstrap.pypa.io/get-pip.py /tmp/get-pip.py
 
-RUN		/bin/busybox chmod 0555 /tini \
-&&		cd /bin \
+RUN		cd /bin \
 &&		busybox ln -fs busybox ln \
 &&		ln -fs busybox sh \
 &&		ln -fs busybox ls \
+&&		ln -fs busybox ps \
 &&		ln -fs busybox chown \
+&&		ln -fs busybox chmod \
 &&		ln -fs busybox ip \
 &&		ln -fs busybox cut \
 &&		ln -fs busybox cat \
@@ -47,6 +48,7 @@ RUN		/bin/busybox chmod 0555 /tini \
 &&		ln -fs busybox wc \
 &&		ln -fs busybox sort \
 &&		cd / \
+&&		chmod 0555 /tini \
 &&		python3 /tmp/get-pip.py \
 &&		pip install --no-cache-dir supervisor \
 &&		ln -sf /usr/local/bin/supervisord /usr/bin/supervisord \
