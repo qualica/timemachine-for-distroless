@@ -1,7 +1,7 @@
 FROM		busybox:1.30.1-glibc AS busybox-build
 
 FROM		solutionsoft/time-machine-for-centos7:latest AS build
-RUN 		rm -rf /etc/ssstm/extras
+# RUN 		rm -rf /etc/ssstm/extras
 
 FROM		gcr.io/distroless/python3:latest
 
@@ -12,6 +12,8 @@ ENV		PYTHONUNBUFFERED=1 \
 ENV		LICHOST=172.0.0.1 \
 		LICPORT=57777 \
 		LICPASS=docker
+
+ENV		TZ=America/Los_Angeles
 
 ARG		TINI_VERSION=v0.18.0 
 ARG		BUSYBOX_VERSION=1.30.0
@@ -49,7 +51,7 @@ RUN		cd /bin \
 &&		ln -fs busybox sort \
 &&		cd / \
 &&		chmod 0555 /tini \
-&&		python3 /tmp/get-pip.py \
+&&		python /tmp/get-pip.py \
 &&		pip install --no-cache-dir supervisor \
 &&		ln -sf /usr/local/bin/supervisord /usr/bin/supervisord \
 &&		mkdir -p /var/log/supervisor \
