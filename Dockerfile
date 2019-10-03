@@ -56,7 +56,7 @@ RUN		cd /bin \
 &&		rm -rf tmagent \
 &&		busybox unzip -qq /tmp/tmagent-linux-x64-${TMAGENT_VERSION}.zip \
 &&		cd /etc/ssstm/extras \
-&&		rm -f .tm*.tgz Makefile.re tm_install_extra \
+&&		rm -f .tm*.tgz Makefile.re \
 &&		cd / \
 &&		chmod 0555 /tini \
 &&		python /tmp/get-pip.py \
