@@ -1,7 +1,6 @@
 FROM		busybox:1.30.1-glibc AS busybox-build
 
 FROM		solutionsoft/time-machine-for-centos7:latest AS build
-# RUN 		rm -rf /etc/ssstm/extras
 
 FROM		gcr.io/distroless/python3:latest
 
@@ -18,6 +17,7 @@ ENV		TZ=America/Los_Angeles
 ARG		TINI_VERSION=v0.18.0 
 ARG		BUSYBOX_VERSION=1.30.0
 ARG		TM_VERSION=12.9R3 
+ARG		TMAGENT_VERSION=11.04r65
 
 # -- copy busybox from the busybox docker image
 COPY		--from=busybox-build /bin/busybox /bin/busybox
@@ -26,6 +26,9 @@ COPY		--from=busybox-build /bin/sh /bin/sh
 # -- copy TM files from the TM/centos image
 COPY 	     	--from=build /etc/ssstm /etc/ssstm
 COPY		--from=build /usr/local/bin/tmlicd /usr/local/bin/tmlicd
+
+# -- copy update TMAgent release
+COPY		./tmagent-linux-x64-${TMAGENT_VERSION}.zip /tmp
 
 # -- copy entrypoint and supervisord conf files
 COPY		./config /
@@ -49,6 +52,11 @@ RUN		cd /bin \
 &&		ln -fs busybox mkdir \
 &&		ln -fs busybox wc \
 &&		ln -fs busybox sort \
+&&		cd /etc/ssstm \
+&&		rm -rf tmagent \
+&&		busybox unzip -qq /tmp/tmagent-linux-x64-${TMAGENT_VERSION}.zip \
+&&		cd /etc/ssstm/extras \
+&&		rm -f .tm*.tgz Makefile.re tm_install_extra \
 &&		cd / \
 &&		chmod 0555 /tini \
 &&		python /tmp/get-pip.py \
